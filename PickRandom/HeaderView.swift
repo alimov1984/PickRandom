@@ -14,7 +14,7 @@ struct HeaderView: View {
             Image(systemName: "figure.socialdance")
                 .foregroundStyle(.tint)
                 .symbolRenderingMode(.hierarchical)
-            Text("Pick-Random-Person")
+            Text("Pick-Random")
         }
         .font(.system(size: 15))
         .bold()

@@ -7,12 +7,12 @@
 
 import SwiftUI
 import SwiftData
-import OSLog
 
 struct ContentView: View {
     @Query(sort: \PersonData.name) private var persons: [PersonData] = []
     
-    @State private var shouldRemovePickedName: Bool = true
+    @State
+    private var shouldRemovePickedName: Bool = true
     
     @State
     private var baseColorArray: [Color] = [.red, .green, .blue, .yellow, .orange, .purple, .pink,
@@ -30,6 +30,8 @@ struct ContentView: View {
                 UserListView(shouldRemovePickedName: $shouldRemovePickedName,
                              baseColorArray: $baseColorArray)
             }
+            .navigationTitle("Главная")
+            .toolbar(.hidden, for: .navigationBar)
             .padding()
             
             Spacer()
@@ -38,8 +40,6 @@ struct ContentView: View {
         
     }
 }
-
-
 
 #Preview {
     ContentView()

@@ -113,7 +113,6 @@ public struct WheelOfFortuneView: View {
             withAnimation {
                 isLargeWinner.toggle()
             }
-            print("Winner name: \(winnerPerson?.name ?? "No winner") | current rotation: \(currentRotation)")
             isSpinning = false
         }
     }
@@ -122,7 +121,7 @@ public struct WheelOfFortuneView: View {
     {
         var winnerPerson: PersonData? = nil
         let resultAngle: Angle = getAngle(angle: currentRotation)
-        print("resultAngle: \(resultAngle.degrees)")
+        
         let anglePerSegment: Angle = .degrees(360 / Double(persons.count))
         
         for (index, person) in persons.enumerated() {
@@ -130,7 +129,6 @@ public struct WheelOfFortuneView: View {
             let endAngle: Angle = anglePerSegment * Double(index + 1)
             if (resultAngle.degrees >= startAngle.degrees && resultAngle.degrees < endAngle.degrees) {
                 winnerPerson = person
-                print("startAngle: \(startAngle.degrees), endAngle: \(endAngle.degrees), resultAngle: \(resultAngle.degrees)")
                 break;
             }
         }

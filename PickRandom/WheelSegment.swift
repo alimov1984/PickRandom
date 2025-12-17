@@ -34,9 +34,5 @@ struct WheelSegment: View {
             .font(.title2)
             .rotationEffect(startAngle + anglePerSegment / 2, anchor: .center)
             .offset(x: textOffsetX, y: textOffsetY)
-        .onAppear {
-            //print("New segment rendered \(textOffsetX), \(textOffsetY)")
-        }
-    
     }
 }

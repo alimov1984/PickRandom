@@ -9,6 +9,8 @@ import SwiftData
 import OSLog
 
 public struct UserListView: View {
+    private let maxTextLength: Int = 11
+    
     @Query(sort: \PersonData.name)
     private var persons: [PersonData] = []
     
@@ -18,7 +20,7 @@ public struct UserListView: View {
     @Environment(\.modelContext)
     private var context
     
-    private var gridColumns = Array(repeating: GridItem(.flexible()), count: 2)
+    private var gridColumns : [GridItem] = [GridItem(.fixed(300))]
     
     @State
     private var isEditing = false
@@ -42,14 +44,16 @@ public struct UserListView: View {
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 20) {
                     GridRow {
-                        Text("Имя участника")
-                        Text("")
+                        Text("Участники")
                     }
                     .font(.headline)
-                    ForEach(persons) { person in
-                        EditUserView(person: person, isEditing: $isEditing)
-                        if person != persons.last {
-                            //Divider()
+                    VStack(spacing: 10) {
+                        ForEach(persons) { person in
+                            
+                            EditUserView(person: person, isEditing: $isEditing)
+                            if person != persons.last {
+                                Divider()
+                            }
                         }
                     }
                 }
@@ -63,21 +67,28 @@ public struct UserListView: View {
                     }
                 }
             }
-            
             HStack
             {
                 TextField("Имя участника", text: $nameToAdd)
                     .autocorrectionDisabled()
                     .onSubmit {
                         performSubmission()
+                    }.onChange(of: nameToAdd) { oldValue, newValue in
+                        if newValue.count > maxTextLength {
+                            nameToAdd = String(newValue.prefix(maxTextLength))
+                        }
                     }
-                Button("Добавить") {
+                Button {
                     performSubmission()
                 }
+                label: {
+                    Text("Добавить")
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 4)
+                }
                 .buttonStyle(.borderedProminent)
-                .font(.title3)
+                .font(.system(size: 15))
                 .padding()
-                
             }
             
             Divider()
@@ -97,8 +108,9 @@ public struct UserListView: View {
     
     func performSubmission() {
         if !nameToAdd.isEmpty {
-            let newPerson = PersonData(name: nameToAdd,
-                                       activated: true
+            let newPerson = PersonData(
+                name: nameToAdd,
+                activated: true
             )
             context.insert(newPerson)
             nameToAdd = ""
