@@ -12,9 +12,7 @@ import SwiftData
 struct PickRandomApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                ContentView()
-            }
+            ContentView()
         }.modelContainer(for: PersonData.self)
     }
 }

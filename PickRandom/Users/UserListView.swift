@@ -39,14 +39,12 @@ public struct UserListView: View {
     
     public var body: some View {
         VStack {
-            HeaderView()
-            
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 20) {
-                    GridRow {
-                        Text("Участники")
-                    }
-                    .font(.headline)
+                   // GridRow {
+                    //    Text("Участники")
+                   // }
+                  //  .font(.headline)
                     VStack(spacing: 10) {
                         ForEach(persons) { person in
                             
@@ -67,43 +65,42 @@ public struct UserListView: View {
                     }
                 }
             }
-            HStack
-            {
-                TextField("Имя участника", text: $nameToAdd)
-                    .autocorrectionDisabled()
-                    .onSubmit {
-                        performSubmission()
-                    }.onChange(of: nameToAdd) { oldValue, newValue in
-                        if newValue.count > maxTextLength {
-                            nameToAdd = String(newValue.prefix(maxTextLength))
-                        }
-                    }
-                Button {
-                    performSubmission()
-                }
-                label: {
-                    Text("Добавить")
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 4)
-                }
-                .buttonStyle(.borderedProminent)
-                .font(.system(size: 15))
-                .padding()
-            }
             
             Divider()
             
-            Toggle("Деактивировать после выбора", isOn: $shouldRemovePickedName)
-                .padding()
+            TextField("Имя нового участника", text: $nameToAdd)
+                .autocorrectionDisabled()
+                .onSubmit {
+                    performSubmission()
+                }.onChange(of: nameToAdd) { oldValue, newValue in
+                    if newValue.count > maxTextLength {
+                        nameToAdd = String(newValue.prefix(maxTextLength))
+                    }
+                }
+            Button {
+                performSubmission()
+            }
+            label: {
+                Text("Добавить")
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 4)
+            }
+            .buttonStyle(.borderedProminent)
+            .font(.system(size: 15))
+            .padding()
             
+            Divider()
             Button("Активировать всех") {
                 persons.forEach({ $0.activated = true })
                 baseColorArray = baseColorArray.shuffled()
             }
             .font(.title3)
             .padding()
+            Toggle("Деактивировать после выбора", isOn: $shouldRemovePickedName)
+                .padding()
         }
         .padding()
+        .navigationTitle("Участники")
     }
     
     func performSubmission() {
@@ -121,7 +118,9 @@ public struct UserListView: View {
 #Preview {
     @Previewable @State var shouldRemovePickedName = true
     @Previewable @State var baseColorArray: [Color] = [.blue, .red, .green]
-    UserListView(shouldRemovePickedName: $shouldRemovePickedName,
-                 baseColorArray: $baseColorArray)
-        .modelContainer(for: PersonData.self)
+    NavigationStack{
+        UserListView(shouldRemovePickedName: $shouldRemovePickedName,
+                     baseColorArray: $baseColorArray)
+        .modelContainer(SampleData.shared.modelContainer)
+    }
 }

@@ -22,18 +22,25 @@ struct ContentView: View {
         VStack {
             HeaderView()
             
-            WheelOfFortuneView(
-                shouldRemovePickedName: $shouldRemovePickedName,
-                baseColorArray: $baseColorArray)
-            
-            NavigationLink("Список участников") {
-                UserListView(shouldRemovePickedName: $shouldRemovePickedName,
-                             baseColorArray: $baseColorArray)
+            TabView(selection: .constant(0)) {
+                NavigationStack {
+                    WheelOfFortuneView(
+                        shouldRemovePickedName: $shouldRemovePickedName,
+                        baseColorArray: $baseColorArray)
+                }
+                .tabItem {
+                    Label("Главная", systemImage: "house")
+                }
+                .tag(0)
+                NavigationStack {
+                    UserListView(shouldRemovePickedName: $shouldRemovePickedName,
+                                 baseColorArray: $baseColorArray)
+                }
+                .tabItem {
+                    Label("Участники", systemImage: "person.and.person")
+                }
+                .tag(1)
             }
-            .navigationTitle("Главная")
-            .toolbar(.hidden, for: .navigationBar)
-            .padding()
-            
             Spacer()
         }
         .padding()
@@ -43,5 +50,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: PersonData.self)
+        .modelContainer(SampleData.shared.modelContainer)
 }

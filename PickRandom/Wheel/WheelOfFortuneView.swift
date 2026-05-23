@@ -49,7 +49,7 @@ public struct WheelOfFortuneView: View {
                 .bold()
                 .foregroundStyle(.tint)
                 .animation(.easeOut(duration: 0.5), value: isLargeWinner)
-                .frame(height: 50, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                .frame(height: 40, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
             
             Image("Arrow")
                 .resizable()
@@ -84,6 +84,8 @@ public struct WheelOfFortuneView: View {
             .buttonStyle(.borderedProminent)
             .font(.title2)
             .disabled(!isExistActivatedPerson() || isSpinning)
+            
+            Spacer()
         }
     }
     
@@ -160,5 +162,5 @@ public struct WheelOfFortuneView: View {
     @Previewable @State var baseColorArray: [Color] = [.blue, .red, .green]
     WheelOfFortuneView(shouldRemovePickedName: $shouldRemovePickedName,
                  baseColorArray: $baseColorArray)
-        .modelContainer(for: PersonData.self)
+    .modelContainer(SampleData.shared.modelContainer)
 }
