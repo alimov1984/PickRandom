@@ -84,8 +84,19 @@ public struct WheelOfFortuneView: View {
             .buttonStyle(.borderedProminent)
             .font(.title2)
             .disabled(!isExistActivatedPerson() || isSpinning)
+            .opacity(persons.isEmpty ? 0 : 1)
             
             Spacer()
+        }
+        .overlay {
+            if persons.isEmpty {
+                ContentUnavailableView {
+                    Label("Нет участников", systemImage: "exclamationmark.circle.fill")
+                    .foregroundStyle(.white, Color.accentColor)
+                } description: {
+                    Text("Не найдено ни одного активного участника.")
+                }
+            }
         }
     }
     
@@ -161,6 +172,6 @@ public struct WheelOfFortuneView: View {
     @Previewable @State var shouldRemovePickedName = true
     @Previewable @State var baseColorArray: [Color] = [.blue, .red, .green]
     WheelOfFortuneView(shouldRemovePickedName: $shouldRemovePickedName,
-                 baseColorArray: $baseColorArray)
-    .modelContainer(SampleData.shared.modelContainer)
+                       baseColorArray: $baseColorArray)
+    .sampleDataContainer()
 }

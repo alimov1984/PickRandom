@@ -17,8 +17,8 @@ public struct UserListView: View {
     @State
     private var nameToAdd = ""
     
-    @Environment(\.modelContext)
-    private var context
+    @Environment(DataContainer.self)
+    private var dataContainer
     
     private var gridColumns : [GridItem] = [GridItem(.fixed(300))]
     
@@ -31,24 +31,32 @@ public struct UserListView: View {
     @Binding
     var baseColorArray: [Color]
     
-    init(shouldRemovePickedName: Binding<Bool>, baseColorArray: Binding<[Color]>)
+    @Binding
+    var selectedTab : TabEnum
+    
+    init(shouldRemovePickedName: Binding<Bool>,
+         baseColorArray: Binding<[Color]>,
+    selectedTab: Binding<TabEnum>)
     {
         self._shouldRemovePickedName = shouldRemovePickedName
         self._baseColorArray = baseColorArray
+        self._selectedTab = selectedTab
     }
     
     public var body: some View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 20) {
-                   // GridRow {
+                    // GridRow {
                     //    Text("Участники")
-                   // }
-                  //  .font(.headline)
+                    // }
+                    //  .font(.headline)
                     VStack(spacing: 10) {
                         ForEach(persons) { person in
                             
-                            EditUserView(person: person, isEditing: $isEditing)
+                            EditUserView(person: person,
+                                         isEditing: $isEditing,
+                                         selectedTab: $selectedTab)
                             if person != persons.last {
                                 Divider()
                             }
@@ -64,40 +72,51 @@ public struct UserListView: View {
                         }
                     }
                 }
-            }
-            
-            Divider()
-            
-            TextField("Имя нового участника", text: $nameToAdd)
-                .autocorrectionDisabled()
-                .onSubmit {
-                    performSubmission()
-                }.onChange(of: nameToAdd) { oldValue, newValue in
-                    if newValue.count > maxTextLength {
-                        nameToAdd = String(newValue.prefix(maxTextLength))
+                .frame(minHeight: 200)
+                .overlay {
+                    if persons.isEmpty {
+                        ContentUnavailableView {
+                            Label("Нет участников", systemImage: "exclamationmark.circle.fill")
+                            .foregroundStyle(.white, Color.accentColor)
+                        } description: {
+                            Text("Для добавления участника введите его имя в поле внизу")
+                        }
                     }
                 }
-            Button {
-                performSubmission()
-            }
-            label: {
-                Text("Добавить")
-                    .padding(.vertical, 2)
-                    .padding(.horizontal, 4)
-            }
-            .buttonStyle(.borderedProminent)
-            .font(.system(size: 15))
-            .padding()
-            
-            Divider()
-            Button("Активировать всех") {
-                persons.forEach({ $0.activated = true })
-                baseColorArray = baseColorArray.shuffled()
-            }
-            .font(.title3)
-            .padding()
-            Toggle("Деактивировать после выбора", isOn: $shouldRemovePickedName)
+                Divider()
+                
+                TextField("Имя нового участника", text: $nameToAdd)
+                    .autocorrectionDisabled()
+                    .onSubmit {
+                        performSubmission()
+                    }.onChange(of: nameToAdd) { oldValue, newValue in
+                        if newValue.count > maxTextLength {
+                            nameToAdd = String(newValue.prefix(maxTextLength))
+                        }
+                    }
+                Button {
+                    performSubmission()
+                }
+                label: {
+                    Text("Добавить")
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 4)
+                }
+                .buttonStyle(.borderedProminent)
+                .font(.system(size: 15))
                 .padding()
+                
+                Divider()
+                Button("Активировать всех") {
+                    persons.forEach({ $0.activated = true })
+                    baseColorArray = baseColorArray.shuffled()
+                }
+                .font(.title3)
+                .padding()
+                Toggle("Деактивировать после выбора", isOn: $shouldRemovePickedName)
+                    .padding()
+            }
+            .scrollDismissesKeyboard(.interactively)
         }
         .padding()
         .navigationTitle("Участники")
@@ -109,7 +128,7 @@ public struct UserListView: View {
                 name: nameToAdd,
                 activated: true
             )
-            context.insert(newPerson)
+            dataContainer.context.insert(newPerson)
             nameToAdd = ""
         }
     }
@@ -118,9 +137,11 @@ public struct UserListView: View {
 #Preview {
     @Previewable @State var shouldRemovePickedName = true
     @Previewable @State var baseColorArray: [Color] = [.blue, .red, .green]
+    @Previewable @State var selectedTab:TabEnum = .users
     NavigationStack{
         UserListView(shouldRemovePickedName: $shouldRemovePickedName,
-                     baseColorArray: $baseColorArray)
-        .modelContainer(SampleData.shared.modelContainer)
+                     baseColorArray: $baseColorArray,
+                     selectedTab: $selectedTab)
+        .sampleDataContainer()
     }
 }

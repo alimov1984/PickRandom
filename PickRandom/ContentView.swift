@@ -11,6 +11,8 @@ import SwiftData
 struct ContentView: View {
     @Query(sort: \PersonData.name) private var persons: [PersonData] = []
     
+    @State private var selectedTab: TabEnum = .home
+    
     @State
     private var shouldRemovePickedName: Bool = true
     
@@ -22,7 +24,7 @@ struct ContentView: View {
         VStack {
             HeaderView()
             
-            TabView(selection: .constant(0)) {
+            TabView(selection: $selectedTab) {
                 NavigationStack {
                     WheelOfFortuneView(
                         shouldRemovePickedName: $shouldRemovePickedName,
@@ -31,15 +33,16 @@ struct ContentView: View {
                 .tabItem {
                     Label("Главная", systemImage: "house")
                 }
-                .tag(0)
+                .tag(TabEnum.home)
                 NavigationStack {
                     UserListView(shouldRemovePickedName: $shouldRemovePickedName,
-                                 baseColorArray: $baseColorArray)
+                                 baseColorArray: $baseColorArray,
+                                 selectedTab: $selectedTab)
                 }
                 .tabItem {
                     Label("Участники", systemImage: "person.and.person")
                 }
-                .tag(1)
+                .tag(TabEnum.users)
             }
             Spacer()
         }
@@ -50,5 +53,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(SampleData.shared.modelContainer)
+        .sampleDataContainer()
 }
